@@ -27,46 +27,48 @@ APPUNTI:
 #include <stdio.h>
 #include <fcntl.h>
 
-char *ft_read_save_str(int fd, char *save)
+char	*ft_read_save_str(int fd, char *save)
 {
-    char *buffer;
-    int r_bytes;
+	char	*buffer;
+	int		r_bytes;
 
-    buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-    if (!buffer)
-        return (NULL);
-
-    while (!ft_strchr(save, '\n'))
-    {
-        r_bytes = read(fd, buffer, BUFFER_SIZE);
-        if (r_bytes == -1)
-            return (NULL);
-    }
+	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (NULL);
+	r_bytes = 1;
+	// se non trova \n e il file non é finito
+	while (!ft_strchr(save, '\n') && r_bytes != 0)
+	{
+		r_bytes = read(fd, buffer, BUFFER_SIZE);
+		if (r_bytes == -1)
+			return (NULL);
+		save = strjoin(save, buffer);
+	}
+	free(buffer);
+	return (save);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-    char *line;
-    static char *save;
-
-    /* se fd */
+	char		*line;
+	static char	*save;
 }
 
 /* i test vengono effettuati su tests/1.txt */
-int main()
+int	main(void)
 {
-    char *line;
-    int i;
-    int fd;
+	char	*line;
+	int		i;
+	int		fd;
 
-    fd = open("tests/1.txt", O_RDONLY);
-    i = 1;
-    while (i < 7)
-    {
-        line = get_next_line(fd);
-        printf("%s", line);
-        i++;
-    }
-    close(fd);
-    return (0);
+	fd = open("tests/1.txt", O_RDONLY);
+	i = 1;
+	while (i < 7)
+	{
+		line = get_next_line(fd);
+		printf("%s", line);
+		i++;
+	}
+	close(fd);
+	return (0);
 }
