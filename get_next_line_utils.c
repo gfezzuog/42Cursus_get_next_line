@@ -12,6 +12,16 @@
 
 #include "get_next_line.h"
 
+size_t ft_strlen(char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i] != '\0')
+        i++;
+    return (i);
+}
+
 /* per trovare la corrispondenza in \n */
 char *ft_strchr(const char *s, int c)
 {

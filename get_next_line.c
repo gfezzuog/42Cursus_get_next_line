@@ -27,10 +27,30 @@ APPUNTI:
 #include <stdio.h>
 #include <fcntl.h>
 
-char	*ft_read_save_str(int fd, char *save)
+char *ft_get_line(char *save)
 {
-	char	*buffer;
-	int		r_bytes;
+	int i;
+	char *s_temp;
+
+	i = 0;
+	while (save[i] && save[i] != '\n')
+		i++;
+	s_temp = (char *)malloc(sizeof(char) * (i + 2));
+
+	i = 0;
+	while (save[i] && save[i] != '\n')
+	{
+		s_temp[i] = save[i];
+		i++;
+	}
+	s_temp[i] = '\0';
+	return (s_temp);
+}
+
+char *ft_read_save_str(int fd, char *save)
+{
+	char *buffer;
+	int r_bytes;
 
 	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buffer)
@@ -41,34 +61,55 @@ char	*ft_read_save_str(int fd, char *save)
 	{
 		r_bytes = read(fd, buffer, BUFFER_SIZE);
 		if (r_bytes == -1)
+		{
+			free(buffer);
 			return (NULL);
-		save = strjoin(save, buffer);
+		}
+		buffer[r_bytes] = '\0'; // devo capire il perché
+		save = ft_strjoin(save, buffer);
 	}
 	free(buffer);
 	return (save);
 }
 
-char	*get_next_line(int fd)
+char *get_next_line(int fd)
 {
-	char		*line;
-	static char	*save;
+	char *line;
+	char *save;
+
+	save = ft_read_save_str(fd, save);
+	line = ft_get_line(save);
+	return (line);
 }
 
 /* i test vengono effettuati su tests/1.txt */
-int	main(void)
+int main(void)
 {
-	char	*line;
-	int		i;
-	int		fd;
+	char *line;
+	int i;
+	int fd;
 
 	fd = open("tests/1.txt", O_RDONLY);
 	i = 1;
 	while (i < 7)
 	{
 		line = get_next_line(fd);
-		printf("%s", line);
+		printf("Line: %s\n", line);
+		free(line);
 		i++;
 	}
 	close(fd);
+
+	// test su read
+	// int fd = open("tests/1.txt", O_RDONLY);
+	// char *buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	// int sz = read(fd, buffer, BUFFER_SIZE);
+
+	// printf("%d", sz);
+	// buffer[sz] = '\0';
+	// printf("%s", buffer);
+
+	// close(fd);
+
 	return (0);
 }
