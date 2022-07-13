@@ -3,40 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgioia <dgioia@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gfezzuog <gfezzuog@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/04 17:42:22 by dgioia            #+#    #+#             */
-/*   Updated: 2022/04/04 17:42:22 by dgioia           ###   ########.fr       */
+/*   Created: 2022/05/16 12:47:37 by gfezzuog          #+#    #+#             */
+/*   Updated: 2022/05/16 12:47:37 by gfezzuog         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t ft_strlen(char *str)
+int ft_strlen(char *str)
 {
     int i;
 
     i = 0;
-    while (str[i] != '\0')
+    while (str[i] != '\0' && str[i] == '\n')
         i++;
     return (i);
 }
 
-/* per trovare la corrispondenza in \n */
-char *ft_strchr(const char *s, int c)
+int *ft_strchr(char *s, int c)
 {
     int i;
 
     i = 0;
-    while (s[i] != '\0' && s[i] != (char)c)
+    while (s[i] != '\0' && s[i] != c)
         i++;
-    if (s[i] == (char)c)
-        return ((char *)s + i);
-    return (NULL);
+    if (s[i] == c)
+        return (i);
+    return (0);
 }
 
-/* per concatenare le stringhe */
-char *ft_strjoin(char const *s1, char const *s2)
+char	*ft_substr(char *s, unsigned int start, size_t len)
+{
+	unsigned int		l;
+	char				*str;
+	unsigned int		i;
+
+	if (!s)
+		return (NULL);
+	l = ft_strlen((char *)s);
+	if (l < len)
+		str = (char *)malloc(l * sizeof(char) + 1);
+	else
+		str = (char *)malloc(len * sizeof(char) + 1);
+	i = 0;
+	if (str == NULL)
+		return (NULL);
+	while (i <= l && len > 0 && start <= l)
+	{
+		str[i] = s[start];
+		i++;
+		start++;
+		len--;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+char *ft_strjoin(char *s1, char *s2)
 {
     char *s3;
     int i;
@@ -61,6 +86,25 @@ char *ft_strjoin(char const *s1, char const *s2)
         j++;
         i++;
     }
+    free (s1);
     s3[i] = '\0';
     return (s3);
+}
+
+char	*ft_strdup(char *s1)
+{
+	char	*s2;
+	size_t	i;
+
+	s2 = (char *)malloc((ft_strlen(s1) + 1) * sizeof(*s1));
+	if (!s2)
+		return (NULL);
+	i = 0;
+	while (s1[i])
+	{
+		s2[i] = s1[i];
+		i++;
+	}
+	s2[i] = 0;
+	return (s2);
 }

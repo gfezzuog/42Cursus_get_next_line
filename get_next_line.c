@@ -3,113 +3,80 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgioia <dgioia@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gfezzuog <gfezzuog@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/04 17:33:59 by dgioia            #+#    #+#             */
-/*   Updated: 2022/04/04 17:33:59 by dgioia           ###   ########.fr       */
+/*   Created: 2022/05/16 12:47:20 by gfezzuog          #+#    #+#             */
+/*   Updated: 2022/05/16 12:47:20 by gfezzuog         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-l'obbiettivo di get_next_line é quello di creare una funzione che legge
-il testo una riga alla volta fino alla fine del file.
-Se non c'é nient'altro da leggere o ci sono errori, restituisce NULL
-
-il programma deve compilare con -D BUFFER_SIZE=val che viene utilizzato come dimensione del
-buffer per le chiamate in lettura.
-
-APPUNTI:
-- funzione per leggere e salvare la riga
-*/
-
 #include "get_next_line.h"
-// cancellare dopo aver finito i test
-#include <stdio.h>
-#include <fcntl.h>
 
-char *ft_get_line(char *save)
+static char	*get_line(int fd, char *str)
 {
-	int i;
-	char *s_temp;
+	char	*string;
+	int		n;
 
-	i = 0;
-	while (save[i] && save[i] != '\n')
-		i++;
-	s_temp = (char *)malloc(sizeof(char) * (i + 2));
-
-	i = 0;
-	while (save[i] && save[i] != '\n')
+	string = malloc(BUFFER_SIZE);   
+	if (!string)
+		return(NULL);
+	if (ft_strchr(str, '\n') == 0 && n != 0)
 	{
-		s_temp[i] = save[i];
-		i++;
+		n = read (fd, string, BUFFER_SIZE);
+		if (n == -1)
+			return(NULL);
+		string[n] = '\0';
+		str = ft_strjoin(str, string);
 	}
-	s_temp[i] = '\0';
-	return (s_temp);
+	free(string);
+	return(str);
 }
-
-char *ft_read_save_str(int fd, char *save)
+	
+static char *ret_line(char *str)
 {
-	char *buffer;
-	int r_bytes;
+	char	*string;
+	int		i;
 
-	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buffer)
-		return (NULL);
-	r_bytes = 1;
-	// se non trova \n e il file non é finito
-	while (!ft_strchr(save, '\n') && r_bytes != 0)
+	i = 0;
+	if(!str[i])
+		return(NULL);
+	string = (char *)malloc(ft_strlen(str));
+	if(!string)
+		return(NULL);
+	while(str[i])
 	{
-		r_bytes = read(fd, buffer, BUFFER_SIZE);
-		if (r_bytes == -1)
+		string[i] == str[i]
+		if(string[i] == '\n')
 		{
-			free(buffer);
-			return (NULL);
+			string[i + 1] = 0;
+			break;
 		}
-		buffer[r_bytes] = '\0'; // devo capire il perché
-		save = ft_strjoin(save, buffer);
+		i++;
 	}
-	free(buffer);
-	return (save);
+	return(string);
 }
+static char *new_line(char *str)
+{
+	char	*string;
+	int		i;
 
+	i = 0;
+	string = ft_substr(str, i, BUFFER_SIZE);
+	return(string);
+}
 char *get_next_line(int fd)
 {
-	char *line;
-	char *save;
+	static char	*string[257];
+	char		*ret;
 
-	save = ft_read_save_str(fd, save);
-	line = ft_get_line(save);
-	return (line);
-}
-
-/* i test vengono effettuati su tests/1.txt */
-int main(void)
-{
-	char *line;
-	int i;
-	int fd;
-
-	fd = open("tests/1.txt", O_RDONLY);
-	i = 1;
-	while (i < 7)
-	{
-		line = get_next_line(fd);
-		printf("Line: %s\n", line);
-		free(line);
-		i++;
-	}
-	close(fd);
-
-	// test su read
-	// int fd = open("tests/1.txt", O_RDONLY);
-	// char *buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	// int sz = read(fd, buffer, BUFFER_SIZE);
-
-	// printf("%d", sz);
-	// buffer[sz] = '\0';
-	// printf("%s", buffer);
-
-	// close(fd);
-
-	return (0);
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 256)
+		return (NULL);
+	if (!string[fd])
+		string[fd] = ft_strdup("");
+	string[fd] = ft_read(fd, linstring]);
+	if (string[fd] == NULL)
+		return (NULL);
+	ret = ret_line(string[fd]);
+	string[fd] = new_line(string[fd]);
+	return (ret);
 }
